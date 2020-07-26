@@ -9,7 +9,6 @@ def __download_photo__(url):
 
 
 class Ion:
-    # Авторизация
     def __init__(self, login, password):
         vk_session = vk_api.VkApi(login, password)
         vk_session.auth()
@@ -17,7 +16,7 @@ class Ion:
         self.upload = vk_api.VkUpload(vk_session)
 
     # Получить записи со стены
-    def get_wall(
+    def wall_get(
             self, owner_id, domain=None, offset=None, count=None, filter=None,
             extended=None, fields=None
     ):
@@ -78,8 +77,8 @@ class Ion:
             filter=filter, extended=extended, fields=fields,
         )
 
-    def photo(self, photos, album_id, latitude=None, longitude=None,
-              caption=None, description=None, group_id=None):
+    def upload_photo(self, photos, album_id, latitude=None, longitude=None,
+                     caption=None, description=None, group_id=None):
         for i in photos:
             if i.split(':')[0] == 'https':
                 __download_photo__(photos)
@@ -91,7 +90,7 @@ class Ion:
             group_id=group_id
         )
 
-    def post_wall(
+    def wall_post(
             self, owner_id, friends_only=None, from_group=None,
             message=None, attachments=None, services=None, signed=None,
             publish_date=None, lat=None, long=None, place_id=None,
@@ -129,7 +128,7 @@ class Ion:
                 <type><owner_id>_<media_id>,<type><owner_id>_<media_id>
 
             <type> — тип медиа-приложения:
-                  photo — фотография;
+                  upload_photo — фотография;
                   video — видеозапись ;
                   audio — аудиозапись;
                   doc — документ;
@@ -148,7 +147,7 @@ class Ion:
             <media_id> — идентификатор медиа-приложения.
 
             Например:
-                photo100172_166443618,photo-1_265827614
+                photo100172_166443618,upload_photo-1_265827614
 
             Также в поле attachments может быть указана ссылка на внешнюю страницу,
             которую Вы хотите разместить в записи, например:
@@ -236,7 +235,7 @@ class Ion:
             mute_notifications=mute_notifications, copyright=copyright,
         )
 
-    def get_friends(self, user_id=None, order=None, list_id=None, count=None,
+    def friends_get(self, user_id=None, order=None, list_id=None, count=None,
                     offset=None, fields=None, name_case=None, ref=None):
         """
         https://vk.com/dev/friends.get
@@ -316,10 +315,55 @@ class Ion:
             user_id=user_id, order=order, list_id=list_id, count=count,
             offset=offset, fields=fields, name_case=name_case, ref=ref)
 
-    def photos_get(
-            self, owner_id=None, album_id=None, photo_ids=None, rev=None,
-            extended=None, feed_type=None, feed=None, photo_sizes=None, offset=None,
-            count=None
+    def photos_get(self, owner_id=None, album_id=None, photo_ids=None,
+                   rev=None, extended=None, feed_type=None, feed=None,
+                   photo_sizes=None, offset=None, count=None):
+        return self.vk.photos.get(
+            owner_id=owner_id, album_id=album_id, photo_ids=photo_ids,
+            rev=rev, extended=extended, feed_type=feed_type, feed=feed,
+            photo_sizes=photo_sizes, offset=offset, count=count
+        )
+
+    def groups_get(self, user_id=None, extended=None, filter=None, fields=None,
+                   offset=None, count=None):
+        # https://vk.com/dev/groups.get
+        return self.vk.groups.get(
+            user_id=user_id, extended=extended, filter=filter, fields=fields,
+            offset=offset, count=count
+        )
+
+    def groups_getMembers(self, group_id=None, sort=None, offset=None,
+                          count=None, fields=None, filter=None):
+        # https://vk.com/dev/groups.getMembers
+        return self.vk.groups.getMembers(
+            group_id=group_id, sort=sort, offset=offset, count=count,
+            fields=fields, filter=filter
+        )
+
+    def users_search(
+            self, q:str=None, sort:bool=None, offset:int=None, count:int=None,
+            fields:str=None, city:int=None, country:int=None,
+            hometown:str=None, university_country:int=None,
+            university:int=None, university_year:int=None,
+            university_faculty:int=None, university_chair:int=None,
+            sex:int=None, status:int=None, age_from:int=None, age_to:int=None,
+            birth_day:int=None, birth_month:int=None, birth_year:int=None,
+            online:int=None, has_photo:bool=None, school_country:int=None,
+            school_class:int=None, school:int=None, school_year:int=None,
+            religion:int=None, company:str=None, position:str=None,
+            group_id:int=None, from_list:str=None
     ):
-        return self.vk.photos.get( # Ты не закончил
-            owner_id=owner_id, album_id=album_id, photo_ids=photo_ids)
+        # https://vk.com/dev/users.search
+        return self.vk.users.search(
+            q=q, sort=sort, offset=offset, count=count, fields=fields,
+            city=city, country=country, hometown=hometown, sex=sex,
+            university_country=university_country, university=university,
+            university_year=university_year, university_chair=university_chair,
+            university_faculty=university_faculty, status=status,
+            age_from=age_from, age_to=age_to, birth_day=birth_day,
+            birth_month=birth_month, birth_year=birth_year, online=online,
+            has_photo=has_photo, school_country=school_country,
+            school_class=school_class, school=school, school_year=school_year,
+            religion=religion, company=company, position=position,
+            group_id=group_id, from_list=from_list
+        )
