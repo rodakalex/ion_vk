@@ -1,64 +1,46 @@
 import Ion_vk
 import base
 
-auth = Ion_vk.Ion('', '')
-# members = auth.groups_getMembers(group_id=150565101)
-
-cities = [
-    'Великие Луки', 34,
-    'Остров', 1112,
-    'Невель', 617,
-    'Опочка',
-    'Печоры',
-    'Порхов',
-    'Дно',
-    'Дедовичи',
-    'Новосокольники',
-    'Струги Красные',
-    'Пыталово',
-    'Себеж',
-    'Пушкинские Горы',
-    'Идрица',
-    'Пустошка',
-    'Красногородск',
-    'Гдов',
-    'Бежаницы',
-    'Локня',
-    'Новоржев',
-    'Кунья',
-    'Сосновый Бор',
-    'Плюсса',
-    'Усвяты',
-    'Палкино'
-]
-
-def counter_id(index):
-    pass
+auth = Ion_vk.Ion(
+    login='',
+    token=''
+)
 
 
-def save_id(usr_id):
-    pass
+def save_city_target(cities):
+    for i in cities:
+        area = auth.database_getCities(
+                    region_id=1069004,
+                    country_id=1,
+                    q=i,
+                    count=1000
+                )
+        for j in area['items']:
+            if j['region'] == 'Псковская область':
+                base.save_city(city=j['title'], city_id=j['id'])
 
 
-def start():
-    for i in base.get_publics():
-        group = i.public_id
-        break
-    index = 0
-    while True:
-        members = auth.groups_getMembers(
-            group_id=group,
-            offset=index,
-            fields='city'
-        )
-        b_flag = len(members['items']) != 1000
-        for i in members['items']:
-            # base.save_user_in_the_public(i, group, 1)
-            print(f'{i}')
-        index += 1000
-        if b_flag:
-            break
+def pre_save_users_from_public():
+    publics = base.get_publics()
+    cities = base.get_city()
+    for public in publics:
+        for city in cities:
+            items = auth.users_search(
+                group_id=public.public_id,
+                city=city.city_id)['items']
+            for i in items:
+                print(f'Save user {i["first_name"]} {i["last_name"]}')
+                base.save_user(
+                    user_id=i['id'],
+                    public_id=public.public_id,
+                    first_name=i['first_name'],
+                    last_name=i['last_name'],
+                    city=city.city,
+                    city_id=city.city_id,
+                    is_closed=i['is_closed'],
+                    is_target=public.is_target
+                )
 
 
 if __name__ == '__main__':
-    start()
+    pre_save_users_from_public()

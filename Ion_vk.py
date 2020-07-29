@@ -9,7 +9,13 @@ def __download_photo__(url):
 
 
 class Ion:
-    def __init__(self, login, password):
+    def __init__(self, login, token):
+        vk_session = vk_api.VkApi(login=login, token=token)
+        vk_session.auth()
+        self.vk = vk_session.get_api()
+        self.upload = vk_api.VkUpload(vk_session)
+
+    def __call__(self, login, password):
         vk_session = vk_api.VkApi(login, password)
         vk_session.auth()
         self.vk = vk_session.get_api()
@@ -341,17 +347,17 @@ class Ion:
         )
 
     def users_search(
-            self, q:str=None, sort:bool=None, offset:int=None, count:int=None,
-            fields:str=None, city:int=None, country:int=None,
-            hometown:str=None, university_country:int=None,
-            university:int=None, university_year:int=None,
-            university_faculty:int=None, university_chair:int=None,
-            sex:int=None, status:int=None, age_from:int=None, age_to:int=None,
-            birth_day:int=None, birth_month:int=None, birth_year:int=None,
-            online:int=None, has_photo:bool=None, school_country:int=None,
-            school_class:int=None, school:int=None, school_year:int=None,
-            religion:int=None, company:str=None, position:str=None,
-            group_id:int=None, from_list:str=None
+            self, q: str = None, sort: bool = None, offset: int = None, count: int = None,
+            fields: str = None, city: int = None, country: int = None,
+            hometown: str = None, university_country: int = None,
+            university: int = None, university_year: int = None,
+            university_faculty: int = None, university_chair: int = None,
+            sex: int = None, status: int = None, age_from: int = None, age_to: int = None,
+            birth_day: int = None, birth_month: int = None, birth_year: int = None,
+            online: int = None, has_photo: bool = None, school_country: int = None,
+            school_class: int = None, school: int = None, school_year: int = None,
+            religion: int = None, company: str = None, position: str = None,
+            group_id: int = None, from_list: str = None
     ):
         # https://vk.com/dev/users.search
         return self.vk.users.search(
@@ -366,4 +372,14 @@ class Ion:
             school_class=school_class, school=school, school_year=school_year,
             religion=religion, company=company, position=position,
             group_id=group_id, from_list=from_list
+        )
+
+    def database_getCities(
+            self, country_id=None, region_id=None, q=None, need_all=None,
+            offset=None, count=None
+    ):
+        # https://vk.com/dev/database.getCities
+        return self.vk.database.getCities(
+            country_id=country_id, region_id=region_id, q=q, need_all=need_all,
+            offset=offset, count=count
         )

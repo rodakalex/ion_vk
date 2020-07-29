@@ -27,7 +27,7 @@ def check_month(date):
 
 
 def test_photo_download():
-    vk.photo(
+    vk.upload_photo(
         photos=['./file.jpg'],
         album_id=273055557
     )
