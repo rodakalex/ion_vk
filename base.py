@@ -19,6 +19,14 @@ class User(Base):
     link = Column(String)
 
 
+class Public(Base):
+    __tablename__ = 'public'
+    public_id = Column(Integer, primary_key=True)
+    name = Column(String)
+    is_target = Column(Integer)
+    link = Column(String)
+
+
 class UserInThePublic(Base):
     __tablename__ = 'user_in_the_public'
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -137,14 +145,6 @@ def add_new_user(
 
 def check_user(user_id):
     return not DB.query(User).filter_by(user_id=user_id).first()
-
-
-class Public(Base):
-    __tablename__ = 'public'
-    public_id = Column(Integer, primary_key=True)
-    name = Column(String)
-    is_target = Column(Integer)
-    link = Column(String)
 
 
 def save_public(public_id, name, target, link):

@@ -9,13 +9,13 @@ def __download_photo__(url):
 
 
 class Ion:
-    def __init__(self, login, token):
-        vk_session = vk_api.VkApi(login=login, token=token)
-        vk_session.auth()
-        self.vk = vk_session.get_api()
-        self.upload = vk_api.VkUpload(vk_session)
+    # def __init__(self, login, token):
+    #     vk_session = vk_api.VkApi(login=login, token=token)
+    #     vk_session.auth()
+    #     self.vk = vk_session.get_api()
+    #     self.upload = vk_api.VkUpload(vk_session)
 
-    def __call__(self, login, password):
+    def __init__(self, login, password):
         vk_session = vk_api.VkApi(login, password)
         vk_session.auth()
         self.vk = vk_session.get_api()
@@ -383,3 +383,7 @@ class Ion:
             country_id=country_id, region_id=region_id, q=q, need_all=need_all,
             offset=offset, count=count
         )
+
+    def execute(self, code=None):
+        # https://vk.com/dev/execute
+        return self.vk.execute(code=code)
